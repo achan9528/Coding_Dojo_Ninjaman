@@ -28,7 +28,7 @@
                 width: 40px;
                 display: inline-block;
             }
-            #ninjaman{
+            .ninjaman{
                 background-color: white;
                 background-image:url('./img/ninja.gif');
                 height: 40px;
@@ -43,22 +43,23 @@
         <div id='world' class='world'></div>
         <script type='text/javascript'>
             var world = [
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,0,0,0,1,1,1,1],
+                [1,1,1,1,0,3,0,1,1,1,1],
+                [1,1,1,1,0,0,0,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1],
             ];
             
             var worldDict = {
                 0: 'blank',
                 1: 'wall',
-                2: 'sushi'
+                2: 'sushi',
                 3: 'ninjaMan'
             };
 
@@ -73,10 +74,13 @@
                     output += row_output + "</div>";
                     row_output = "<div class = 'row'>";
                 }
-                // output = "<div class='row'><div class = 'wall'></div></div>";
                 document.getElementById('world').innerHTML = output;
             }
-            
+
+            // document.onkeydown = function(e){
+                
+            // }
+
             drawWorld();
         </script>
     </body>
