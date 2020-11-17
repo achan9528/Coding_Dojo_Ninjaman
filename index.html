@@ -6,6 +6,9 @@
                 margin: 0;
                 padding: 0;
             }
+            .row{
+                line-height: 0;
+            }
             .wall{
                 background-color: black;
                 height: 40px;
@@ -34,45 +37,47 @@
                 background-size: contain;
             }
         </style>
-        <script>
 
-        </script>
     </head>
     <body>
-        <div class='row'>
-            <div class='sushi'></div>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='blank'></div>
-            <div class='wall'></div>
-        </div>
-        <div class='row'>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='blank'></div>
-            <div id='ninjaman'></div>
-            <div class='blank'></div>
-        </div>
-        <div class='row'>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='blank'></div>
-            <div class='wall'></div>
-        </div>
-        <div class='row'>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='wall'></div>
-        </div>
-        <div class='row'>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='wall'></div>
-            <div class='wall'></div>
-        </div>
+        <div id='world' class='world'></div>
+        <script type='text/javascript'>
+            var world = [
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+            ];
+            
+            var worldDict = {
+                0: 'blank',
+                1: 'wall',
+                2: 'sushi'
+                3: 'ninjaMan'
+            };
+
+            function drawWorld(){
+                var row_output = "<div class = 'row'>";
+                var col_output = "";
+                var output = "";
+                for (var i = 0; i < world.length ;i++){
+                    for (var n = 0; n < world[i].length; n++){
+                        row_output += "<div class = '" + worldDict[world[i][n]] + "'></div>";
+                    }
+                    output += row_output + "</div>";
+                    row_output = "<div class = 'row'>";
+                }
+                // output = "<div class='row'><div class = 'wall'></div></div>";
+                document.getElementById('world').innerHTML = output;
+            }
+            
+            drawWorld();
+        </script>
     </body>
 </html>
