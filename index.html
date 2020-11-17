@@ -1,46 +1,83 @@
 <html>
-    <body>
-        <div id="background" style="width: 900px; height: 750px; background-image: url('img/white_bg.jpg');">
-          <div id="character" style="width: 59px; height: 86px; background-image: url('img/down1.png'); position: absolute; left: 150px; top: 150px;"></div>  
-        </div>
-
-        <script type="text/javascript">
-            var leftValue = 150;
-            var topValue = 150;
-            var walkValue = 1;
-            document.onkeydown = function(e){
-                console.log(e);
-                if (walkValue == 1){
-                    walkValue = 2;
-                }
-                else if (walkValue == 2){
-                    walkValue = 1;
-                }
-                if(e.keyCode == 37){
-                    // Left
-                    leftValue = leftValue - 25;
-                    document.getElementById("character").style.left = leftValue+"px";
-                    document.getElementById("character").style.backgroundImage = "url('img/left"+walkValue+".png')";
-                }
-                else if (e.keyCode == 39){
-                    // Right
-                    leftValue = leftValue + 25;
-                    document.getElementById("character").style.left = leftValue+"px";
-                    document.getElementById("character").style.backgroundImage = "url('img/right"+walkValue+".png')";
-                }
-                else if (e.keyCode == 38){
-                    // Top
-                    topValue = topValue - 25;
-					document.getElementById("character").style.top = topValue+"px";
-					document.getElementById("character").style.backgroundImage = "url('img/top"+walkValue+".png')";
-                }
-                else if (e.keyCode == 40){
-                    // Bottom
-                    topValue = topValue + 25;
-					document.getElementById("character").style.top = topValue+"px";
-					document.getElementById("character").style.backgroundImage = "url('img/down"+walkValue+".png')";
-                }
+    <head>
+        <title>NinjaMan</title>
+        <style type="text/css">
+            * {
+                margin: 0;
+                padding: 0;
             }
+            .row{
+                line-height: 0;
+            }
+            .wall{
+                background-color: black;
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+            }
+            .sushi{
+                background-color: white;
+                background-image: url('./img/sushi.png');
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+            }
+            .blank{
+                background-color: white;
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+            }
+            #ninjaman{
+                background-color: white;
+                background-image:url('./img/ninja.gif');
+                height: 40px;
+                width: 40px;
+                display: inline-block;
+                background-size: contain;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id='world' class='world'></div>
+        <script type='text/javascript'>
+            var world = [
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1],
+            ];
+            
+            var worldDict = {
+                0: 'blank',
+                1: 'wall',
+                2: 'sushi'
+                3: 'ninjaMan'
+            };
+
+            function drawWorld(){
+                var row_output = "<div class = 'row'>";
+                var col_output = "";
+                var output = "";
+                for (var i = 0; i < world.length ;i++){
+                    for (var n = 0; n < world[i].length; n++){
+                        row_output += "<div class = '" + worldDict[world[i][n]] + "'></div>";
+                    }
+                    output += row_output + "</div>";
+                    row_output = "<div class = 'row'>";
+                }
+                // output = "<div class='row'><div class = 'wall'></div></div>";
+                document.getElementById('world').innerHTML = output;
+            }
+            
+            drawWorld();
         </script>
     </body>
 </html>
