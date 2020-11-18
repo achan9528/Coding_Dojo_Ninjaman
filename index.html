@@ -124,6 +124,30 @@
             #world{
                 display: inline-block;
             }
+            .ghost1{
+                background-image: url('./img/pinky.gif');
+                background-repeat: no-repeat;
+                background-position: center;
+                width: 40px;
+                height: 40px;
+                position:absolute;
+            }
+            .ghost2{
+                background-image: url('./img/pumpky.gif');
+                background-repeat: no-repeat;
+                background-position: center;
+                width: 40px;
+                height: 40px;
+                position:absolute;
+            }
+            .ghost3{
+                background-image: url('./img/red.gif');
+                background-repeat: no-repeat;
+                background-position: center;
+                width: 40px;
+                height: 40px;
+                position:absolute;
+            }
         </style>
 
     </head>
@@ -143,12 +167,25 @@
         </div>
         <div id='gameScreen'>
             <div id='world' class='world'></div>
-            <div id = 'ninja' class='ninja'></div>
+            <div id = 'characters'>
+                <div id = 'ninja' class='ninja'></div>
+            </div>
             <div id = 'gameOver'>
                 <h1>Game Over!</h1>
             </div>
         </div>
         <script type='text/javascript'>
+
+            function randomNumber(min,max){
+                var num = max + 1;
+                var keepGoing = true;
+                num = Math.round(Math.random() * max);
+                if (num < min){
+                    num = min;
+                }
+                return num;
+            }
+
             var world = []
             function randomWorld(){
                 var i = 0;
@@ -166,19 +203,15 @@
                 // create a playable board.
                 var w = [];
                 var v = [];
-                var temp = 0;
+                var temp = -1;
                 for (var a = 0; a < 11; a++){
                     for (var b = 0; b < 11; b++){
-                        do {
-                            temp = (Math.floor(Math.random() * 10));
-                        } while (temp > 4)
+                        temp = randomNumber(0,3);
                         v.push(temp);
                     }
                     w.push(v);
                     v = [];
                 }
-                console.log(i);
-                console.log(n);
                 return w;
             }
             var world = randomWorld();
@@ -201,7 +234,7 @@
                 1: 'wall',
                 2: 'sushi',
                 3: 'onigiri',
-                4: 'ghost'
+                // 4: 'ghost'
             };
 
             var ninja = {
@@ -210,6 +243,8 @@
                 sushi: 0,
                 lives: 3
             };
+
+            var ghosts = [];
 
             function drawWorld(){
                 var row_output = "<div class = 'row'>";
@@ -243,25 +278,15 @@
             };
 
             function initNinja(){
-                var foundStart = false;
-                for (var i = 0; i < world.length; i++){
-                    for (var n = 0; n < world[i].length; n++){
-                        if (world[i][n] == 0){
-                            ninja.x = n
-                            foundStart = true;
-                            break;
-                        }
-                    }
-                    if (foundStart){
-                        break;
-                    } else {
-                        ninja.y += 1;
-                    }
-                }
+                do {
+                    var random_row = randomNumber(0,world.length-1);
+                    var random_col = randomNumber(0,world[random_row].length-1);
+                } while (world[random_row][random_col] != 0);
+                ninja.x = random_col;
+                ninja.y = random_row;
+                
                 document.getElementById('ninja').style.left = (ninja.x * 40) + "px"
                 document.getElementById('ninja').style.top = ((ninja.y * 40) + 80) + "px"
-                // console.log(ninja.x);
-                // console.log(ninja.y);
             }
 
             function drawNinja(){
@@ -272,11 +297,58 @@
             function drawGameOver(){
                 document.getElementById('gameOver').style.visibility = 'visible';
                 document.onkeydown = function(e){};
-            }
+            };
 
+            function initGhosts(){
+                var numGhosts = randomNumber(0,10);
+                var output = "";                
+                // create ghosts
+                for (var i = 1; i <= numGhosts; i++){
+                    var ghostName = "ghost" + i;
+                    var ghostClass = "ghost" + randomNumber(1,3);
+                    var temp = {
+                        name: ghostName,
+                        x: 0,
+                        y: 0
+                    };
+                    ghosts.push(temp);
+                    output += "<div id=" + ghostName + " class = " + ghostClass + "></div>";
+                };
+                document.getElementById('characters').innerHTML += output;
 
+                // add them to the board
+                for (var n = 0; n < ghosts.length; n++){
+                    do {
+                        var random_row = randomNumber(0,world.length-1);
+                        var random_col = randomNumber(0,world[random_row].length-1);
+                    } while (world[random_row][random_col] != 0 && (random_row != ninja.y && random_col != ninja.x));
+                    ghosts[n].x = random_col;
+                    ghosts[n].y = random_row;
+                    document.getElementById(ghosts[n].name).style.left = (ghosts[n].x * 40) + "px"
+                    document.getElementById(ghosts[n].name).style.top = ((ghosts[n].y * 40) + 80) + "px"
+                }
+            };
+
+            function drawGhosts(){
+                var temp;
+                for (var i = 0; i < ghosts.length; i++){ // for each ghost
+                    temp = randomNumber(0,1);
+                    current_ghost = ghosts[i];
+
+                    if (temp == 0){ // change x
+                        if (ninja.x > current_ghost.x){
+                            if (world[current_ghost.y][current_ghost.x + 1] != 1){
+                                current_ghost.x++;
+                            }
+                        }
+                    }
+                    document.getElementById(ghosts[n].name).style.left = (ghosts[n].x * 40) + "px"
+                    document.getElementById(ghosts[n].name).style.top = ((ghosts[n].y * 40) + 80) + "px"
+                };
+            };
 
             document.onkeydown = function(e){    
+                // prevents the up and down scrolling by default by the arrow keys
                 // make the ninja walk
                 moveDict = {
                     37: 'left',
@@ -287,7 +359,9 @@
                 var dir = moveDict[e.keyCode];
                 
                 var next_space = 1;
-
+                if (dir == 'left' || dir == 'right' || dir == 'up' || dir == 'down'){
+                    e.preventDefault();
+                };
                 if (dir == 'left'){
                     document.getElementById('ninja').style.webkitTransform = "scaleX(-1)";
                     if (ninja.x - 1 >= 0){
@@ -357,17 +431,16 @@
                 drawScoreboard();
                 drawWorld();
                 drawNinja();
-                console.log(ninja.lives);
 
                 if (ninja.lives == 0){
                     drawGameOver();
-                }
+                };
             };
-                
-            drawWorld();
+
             drawScoreboard();
+            drawWorld();
             initNinja();
-            randomWorld();
+            initGhosts();
         </script>
     </body>
 </html>
