@@ -100,13 +100,13 @@
         <div id='world' class='world'></div>
         <div id = 'ninja' class='ninja'></div>
         <div id='scoreboard'>
-            <div class = 'scoreinfo' id='lives'>
+            <div id='lives' class = 'scoreinfo' >
+                <!-- <div class='life'></div>
                 <div class='life'></div>
-                <div class='life'></div>
-                <div class='life'></div>
+                <div class='life'></div> -->
             </div><div class = 'scoreinfo'>
-                <div class='score_number'>
-                    <p id ='sushi_counter'>0</p>
+                <div id ='sushi_counter' class='score_number'>
+                    <p>0</p>
                 </div>
                 <div class='score_image'></div>
             </div>
@@ -139,7 +139,8 @@
             var ninja = {
                 x: 0, // these are multipliers to the pixels
                 y: 0,
-                sushi: 0
+                sushi: 0,
+                lives: 3
             };
 
             function drawWorld(){
@@ -162,12 +163,14 @@
 
             function drawScoreboard(){
                 // draws lives section
-                var output = "<div id = 'lives' class = 'scoreinfo'>";
-                for (var i = 0; i < 3; i++){
+                var output = ""
+                for (var i = 0; i < ninja.lives; i++){
                     output += "<div class = 'life'></div>";
                 }
-                output += "</div><div id = 'sushi_counter' class = 'scoreinfo'>";
-                document.getElementById('lives').innerHTML = output;
+                document.getElementById('lives').innerHTML = output + "</div>";
+
+                // draw count
+                document.getElementById('sushi_counter').innerHTML = "<p>" + ninja.sushi + "</p>";;
                 
             };
 
@@ -246,11 +249,12 @@
                 document.getElementById('ninja').style.left = (ninja.x * 40) + "px";
                 document.getElementById('ninja').style.top = (ninja.y * 40) + "px";
                 drawWorld();
+                drawScoreboard();
                 // drawNinja();
             };
                 
             drawWorld();
-            // drawScoreboard();
+            drawScoreboard();
             drawNinja();
         </script>
     </body>
