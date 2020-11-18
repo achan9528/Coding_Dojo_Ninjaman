@@ -135,22 +135,50 @@
         <script type='text/javascript'>
             var world = []
             function randomWorld(){
-                var i = math.random();
-                var n = math.random();
+                var i = 0;
+                var n = 0;
+                // This code makes a randomly dimensioned world with a minimum size. 
+                // do {
+                //     i = Math.floor(Math.random() * 50);    
+                // } while (i < 10 || i > 40);
+                
+                // do {
+                //     n = Math.floor(Math.random() * 50);
+                // } while (n < 10 || n > 40);
+
+                // as long as one block connects from the last row then that is sufficient to 
+                // create a playable board.
+                var w = [];
+                var v = [];
+                var temp = 0;
+                for (var a = 0; a < 11; a++){
+                    for (var b = 0; b < 11; b++){
+                        do {
+                            temp = (Math.floor(Math.random() * 10));
+                        } while (temp > 3)
+                        v.push(temp);
+                    }
+                    w.push(v);
+                    v = [];
+                }
+                console.log(i);
+                console.log(n);
+                return w;
             }
-            var world = [
-                [1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,0,0,2,1,1,1,1],
-                [1,1,1,1,0,3,0,1,1,1,1],
-                [1,1,1,1,4,0,0,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1],
-            ];
+            var world = randomWorld();
+            // var world = [
+            //     [1,1,1,1,1,1,1,1,1,1,1],
+            //     [1,1,1,1,1,1,1,1,1,1,1],
+            //     [1,1,1,1,1,1,1,1,1,1,1],
+            //     [1,1,1,1,1,1,1,1,1,1,1],
+            //     [1,1,1,1,0,0,2,1,1,1,1],
+            //     [1,1,1,1,0,3,0,1,1,1,1],
+            //     [1,1,1,1,4,0,0,1,1,1,1],
+            //     [1,1,1,1,1,1,1,1,1,1,1],
+            //     [1,1,1,1,1,1,1,1,1,1,1],
+            //     [1,1,1,1,1,1,1,1,1,1,1],
+            //     [1,1,1,1,1,1,1,1,1,1,1],
+            // ];
             
             var worldDict = {
                 0: 'blank',
@@ -216,8 +244,8 @@
                 }
                 document.getElementById('ninja').style.left = (ninja.x * 40) + "px"
                 document.getElementById('ninja').style.top = ((ninja.y * 40) + 80) + "px"
-                console.log(ninja.x);
-                console.log(ninja.y);
+                // console.log(ninja.x);
+                // console.log(ninja.y);
             }
 
             function drawNinja(){
@@ -239,60 +267,68 @@
 
                 if (dir == 'left'){
                     document.getElementById('ninja').style.webkitTransform = "scaleX(-1)";
-                    next_space = world[ninja.y][ninja.x - 1];
-                    if (next_space != 1){
-                        ninja.x--;
-                        if (next_space >= 2){
-                            world[ninja.y][ninja.x] = 0;
-                            if (next_space == 2 || next_space == 3){
-                                ninja.sushi++;
-                            } else if (ninja_space == 4){
-                                ninja.lives--;
+                    if (ninja.x - 1 >= 0){
+                        next_space = world[ninja.y][ninja.x - 1];
+                        if (next_space != 1){
+                            ninja.x--;
+                            if (next_space >= 2){
+                                world[ninja.y][ninja.x] = 0;
+                                if (next_space == 2 || next_space == 3){
+                                    ninja.sushi++;
+                                } else if (ninja_space == 4){
+                                    ninja.lives--;
+                                };
                             };
                         };
                     };
                 } else if (dir == 'right'){
                     document.getElementById('ninja').style.webkitTransform = "scaleX(1)";
-                    next_space = world[ninja.y][ninja.x + 1];
-                    if (next_space != 1){
-                        ninja.x++;
-                        if (next_space >= 2){
-                            world[ninja.y][ninja.x] = 0;
-                            if (next_space == 2 || next_space == 3){
-                                ninja.sushi++;
-                            } else if (next_space == 4){
-                                ninja.lives--;
+                    if (ninja.x + 1 < world[0].length){
+                        next_space = world[ninja.y][ninja.x + 1];
+                        if (next_space != 1){
+                            ninja.x++;
+                            if (next_space >= 2){
+                                world[ninja.y][ninja.x] = 0;
+                                if (next_space == 2 || next_space == 3){
+                                    ninja.sushi++;
+                                } else if (next_space == 4){
+                                    ninja.lives--;
+                                };
                             };
                         };
                     };
                 } else if (dir == 'up'){
                     document.getElementById('ninja').style.transform = "rotate(270deg)";
-                    next_space = world[ninja.y - 1][ninja.x];
-                    if (next_space != 1){
-                        ninja.y--;
-                        if (next_space >= 2){
-                            world[ninja.y][ninja.x] = 0;
-                            if (next_space == 2 || next_space == 3){
-                                ninja.sushi++;
-                            } else if (next_space == 4){
-                                ninja.lives--;
+                    if (ninja.y - 1 >= 0){
+                        next_space = world[ninja.y - 1][ninja.x];
+                        if (next_space != 1){
+                            ninja.y--;
+                            if (next_space >= 2){
+                                world[ninja.y][ninja.x] = 0;
+                                if (next_space == 2 || next_space == 3){
+                                    ninja.sushi++;
+                                } else if (next_space == 4){
+                                    ninja.lives--;
+                                };
                             };
                         };
                     };
                 } else if (dir == 'down'){
                     document.getElementById('ninja').style.transform = "rotate(90deg)";
-                    next_space = world[ninja.y + 1][ninja.x];
-                    if (next_space != 1){
-                        ninja.y++;
-                        if (next_space >= 2){
-                            world[ninja.y][ninja.x] = 0;
-                            if (next_space == 2 || next_space ==3){
-                                ninja.sushi++;
-                            } else if (next_space == 4){
-                                ninja.lives--;
+                    if (ninja.y + 1 <= world.length){
+                        next_space = world[ninja.y + 1][ninja.x];
+                        if (next_space != 1){
+                            ninja.y++;
+                            if (next_space >= 2){
+                                world[ninja.y][ninja.x] = 0;
+                                if (next_space == 2 || next_space ==3){
+                                    ninja.sushi++;
+                                } else if (next_space == 4){
+                                    ninja.lives--;
+                                }
                             }
                         }
-                    }
+                    };
                 };
                 drawWorld();
                 drawScoreboard();
@@ -302,6 +338,7 @@
             drawWorld();
             drawScoreboard();
             initNinja();
+            randomWorld();
         </script>
     </body>
 </html>
