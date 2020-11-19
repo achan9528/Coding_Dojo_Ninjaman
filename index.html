@@ -157,7 +157,7 @@
             <div id='lives' class = 'scoreinfo' >
             </div><div class = 'scoreinfo'>
                 <div id ='sushi_counter' class='score_number'>
-                    <p>0</p>
+                    <p></p>
                 </div>
                 <div class='score_image'></div>
             </div>
@@ -203,7 +203,7 @@
                 var temp = -1;
                 for (var a = 0; a < 11; a++){
                     for (var b = 0; b < 11; b++){
-                        temp = randomNumber(0,3);
+                        temp = randomNumber(1,3);
                         v.push(temp);
                     }
                     w.push(v);
@@ -211,27 +211,12 @@
                 }
                 return w;
             }
-            var world = randomWorld();
-            // var world = [
-            //     [1,1,1,1,1,1,1,1,1,1,1],
-            //     [1,1,1,1,1,1,1,1,1,1,1],
-            //     [1,1,1,1,1,1,1,1,1,1,1],
-            //     [1,1,1,1,1,1,1,1,1,1,1],
-            //     [1,1,1,1,0,0,2,1,1,1,1],
-            //     [1,1,1,1,0,3,0,1,1,1,1],
-            //     [1,1,1,1,4,0,0,1,1,1,1],
-            //     [1,1,1,1,1,1,1,1,1,1,1],
-            //     [1,1,1,1,1,1,1,1,1,1,1],
-            //     [1,1,1,1,1,1,1,1,1,1,1],
-            //     [1,1,1,1,1,1,1,1,1,1,1],
-            // ];
-            
+            var world = randomWorld();            
             var worldDict = {
                 0: 'blank',
                 1: 'wall',
                 2: 'sushi',
                 3: 'onigiri',
-                // 4: 'ghost'
             };
 
             var ninja = {
@@ -249,11 +234,7 @@
                 var output = "";
                 for (var i = 0; i < world.length ;i++){
                     for (var n = 0; n < world[i].length; n++){
-                        if (worldDict[world[i][n]] == 'ninja'){
-                            row_output += "<div class = 'ninja' id = 'ninja'></div>";
-                        } else{
                         row_output += "<div class = '" + worldDict[world[i][n]] + "'></div>";
-                        }
                     }
                     output += row_output + "</div>";
                     row_output = "<div class = 'row'>";
@@ -275,13 +256,17 @@
             };
 
             function initNinja(){
+                var random_row = randomNumber(0,world.length-1);
+                var random_col = randomNumber(0,world[random_row].length-1);
                 do {
-                    var random_row = randomNumber(0,world.length-1);
-                    var random_col = randomNumber(0,world[random_row].length-1);
-                } while (world[random_row][random_col] != 0);
+                    random_row = randomNumber(0,world.length-1);
+                    random_col = randomNumber(0,world[random_row].length-1);
+                } while (world[random_row][random_col] == 1);
                 ninja.x = random_col;
                 ninja.y = random_row;
                 
+                world[random_row][random_col] = 0;
+                drawWorld();
                 document.getElementById('ninja').style.left = (ninja.x * 40) + "px"
                 document.getElementById('ninja').style.top = ((ninja.y * 40) + 80) + "px"
             }
@@ -307,7 +292,7 @@
 
             function initGhosts(){
                 var numGhosts = randomNumber(3,10);
-                var output = "";                
+                var output = "";
                 // create ghosts
                 for (var i = 1; i <= numGhosts; i++){
                     var ghostName = "ghost" + i;
@@ -330,7 +315,7 @@
                     do {
                         random_row = randomNumber(0,world.length-1);
                         random_col = randomNumber(0,world[random_row].length-1);
-                    } while (world[random_row][random_col] != 0 || (random_row == ninja.y && random_col == ninja.x));
+                    } while (world[random_row][random_col] == 1 || (random_row == ninja.y && random_col == ninja.x));
                     ghosts[n].x = random_col;
                     ghosts[n].y = random_row;
                     document.getElementById(ghosts[n].name).style.left = (ghosts[n].x * 40) + "px"
@@ -458,8 +443,9 @@
                         }
                     } 
                 };
-
+                console.log(world);
                 drawWorld();
+                console.log(world);
                 drawNinja();
                 drawGhosts();
                 drawScoreboard();
@@ -473,6 +459,7 @@
             drawWorld();
             initNinja();
             initGhosts();
+            console.log(world);
         </script>
     </body>
 </html>
