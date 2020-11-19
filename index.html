@@ -155,9 +155,6 @@
 
         <div id='scoreboard'>
             <div id='lives' class = 'scoreinfo' >
-                <!-- <div class='life'></div>
-                <div class='life'></div>
-                <div class='life'></div> -->
             </div><div class = 'scoreinfo'>
                 <div id ='sushi_counter' class='score_number'>
                     <p>0</p>
@@ -167,11 +164,11 @@
         </div>
         <div id='gameScreen'>
             <div id='world' class='world'></div>
-            <div id = 'characters'>
-                <div id = 'ninja' class='ninja'></div>
-            </div>
             <div id = 'gameOver'>
                 <h1>Game Over!</h1>
+            </div>
+            <div id = 'characters'>
+                <div id = 'ninja' class='ninja'></div>
             </div>
         </div>
         <script type='text/javascript'>
@@ -292,6 +289,15 @@
             function drawNinja(){
                 document.getElementById('ninja').style.left = (ninja.x * 40) + "px"
                 document.getElementById('ninja').style.top = ((ninja.y * 40) + 80) + "px"
+                for (var i = 0; i < ghosts.length; i++){
+                    current_ghost = ghosts[i];
+                    if (ninja.x == current_ghost.x && ninja.y == current_ghost.y && current_ghost.status == "alive"){
+                        ninja.lives--;
+                        current_ghost.status = ""
+                        console.log(ninja,current_ghost);
+                        document.getElementById(current_ghost.name).style.visibility = "hidden";
+                    }
+                }
             };
 
             function drawGameOver(){
@@ -300,7 +306,7 @@
             };
 
             function initGhosts(){
-                var numGhosts = randomNumber(0,10);
+                var numGhosts = randomNumber(3,10);
                 var output = "";                
                 // create ghosts
                 for (var i = 1; i <= numGhosts; i++){
@@ -309,7 +315,8 @@
                     var temp = {
                         name: ghostName,
                         x: 0,
-                        y: 0
+                        y: 0,
+                        status: "alive"
                     };
                     ghosts.push(temp);
                     output += "<div id=" + ghostName + " class = " + ghostClass + "></div>";
@@ -318,10 +325,12 @@
 
                 // add them to the board
                 for (var n = 0; n < ghosts.length; n++){
+                    var random_row = ninja.y;
+                    var random_col = ninja.x;
                     do {
-                        var random_row = randomNumber(0,world.length-1);
-                        var random_col = randomNumber(0,world[random_row].length-1);
-                    } while (world[random_row][random_col] != 0 && (random_row != ninja.y && random_col != ninja.x));
+                        random_row = randomNumber(0,world.length-1);
+                        random_col = randomNumber(0,world[random_row].length-1);
+                    } while (world[random_row][random_col] != 0 || (random_row == ninja.y && random_col == ninja.x));
                     ghosts[n].x = random_col;
                     ghosts[n].y = random_row;
                     document.getElementById(ghosts[n].name).style.left = (ghosts[n].x * 40) + "px"
@@ -330,25 +339,21 @@
             };
 
             function drawGhosts(){
-                var temp;
-                for (var i = 0; i < ghosts.length; i++){ // for each ghost
-                    temp = randomNumber(0,1);
-                    current_ghost = ghosts[i];
-
-                    if (temp == 0){ // change x
-                        if (ninja.x > current_ghost.x){
-                            if (world[current_ghost.y][current_ghost.x + 1] != 1){
-                                current_ghost.x++;
-                            }
-                        }
+                for (var i = 0; i < ghosts.length; i++){
+                document.getElementById(ghosts[i].name).style.left = (ghosts[i].x * 40) + "px"
+                document.getElementById(ghosts[i].name).style.top = ((ghosts[i].y * 40) + 80) + "px"
+                if (current_ghost.y == ninja.y && current_ghost.x == ninja.x && current_ghost.status == "alive"){
+                        ninja.lives--;
+                        console.log(ninja, ghosts[i], ghosts);
+                        document.getElementById(ghosts[i].name).style.visibility = "hidden";
+                        current_ghost.status = "";
                     }
-                    document.getElementById(ghosts[n].name).style.left = (ghosts[n].x * 40) + "px"
-                    document.getElementById(ghosts[n].name).style.top = ((ghosts[n].y * 40) + 80) + "px"
                 };
             };
 
             document.onkeydown = function(e){    
                 // prevents the up and down scrolling by default by the arrow keys
+
                 // make the ninja walk
                 moveDict = {
                     37: 'left',
@@ -372,8 +377,6 @@
                                 world[ninja.y][ninja.x] = 0;
                                 if (next_space == 2 || next_space == 3){
                                     ninja.sushi++;
-                                } else if (next_space == 4){
-                                    ninja.lives--;
                                 };
                             };
                         };
@@ -388,8 +391,6 @@
                                 world[ninja.y][ninja.x] = 0;
                                 if (next_space == 2 || next_space == 3){
                                     ninja.sushi++;
-                                } else if (next_space == 4){
-                                    ninja.lives--;
                                 };
                             };
                         };
@@ -404,9 +405,7 @@
                                 world[ninja.y][ninja.x] = 0;
                                 if (next_space == 2 || next_space == 3){
                                     ninja.sushi++;
-                                } else if (next_space == 4){
-                                    ninja.lives--;
-                                };
+                                }
                             };
                         };
                     };
@@ -420,19 +419,52 @@
                                 world[ninja.y][ninja.x] = 0;
                                 if (next_space == 2 || next_space ==3){
                                     ninja.sushi++;
-                                } else if (next_space == 4){
-                                    ninja.lives--;
                                 }
                             }
                         }
                     };
                 };
 
-                drawScoreboard();
+                // move ghosts
+                var temp;
+                var next_space;
+                for (var i = 0; i < ghosts.length; i++){ // for each ghost
+                    temp = randomNumber(0,1);
+                    current_ghost = ghosts[i];
+
+                    if (temp == 0 && current_ghost.x != ninja.x){ // change x
+                        if (ninja.x > current_ghost.x){
+                            next_space = world[current_ghost.y][current_ghost.x + 1];
+                            if (worldDict[next_space] != 'wall'){
+                                current_ghost.x++;
+                            }
+                        } else if (ninja.x < current_ghost.x){
+                            next_space = world[current_ghost.y][current_ghost.x - 1];
+                            if (worldDict[next_space] != 'wall'){
+                                current_ghost.x--;
+                            }
+                        }
+                    } else if (temp == 1 && current_ghost.y != ninja.y){ // change y
+                        if (ninja.y > current_ghost.y){
+                            next_space = world[current_ghost.y+1][current_ghost.x];
+                            if (worldDict[next_space] != 'wall'){
+                                current_ghost.y++;
+                            }
+                        } else if (ninja.y < current_ghost.y){
+                            next_space = world[current_ghost.y-1][current_ghost.x];
+                            if (worldDict[next_space] != 'wall'){
+                                current_ghost.y--;
+                            }
+                        }
+                    } 
+                };
+
                 drawWorld();
                 drawNinja();
+                drawGhosts();
+                drawScoreboard();
 
-                if (ninja.lives == 0){
+                if (ninja.lives <= 0){
                     drawGameOver();
                 };
             };
